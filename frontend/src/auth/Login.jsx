@@ -97,7 +97,7 @@ const Login = () => {
           <div className="relative w-96 p-8 rounded-2xl bg-white shadow-[0_0_80px_rgba(253,224,71,0.45)]">
             <h2 className="text-2xl font-semibold text-center">Log in</h2>
             <p className="text-sm text-gray-500 text-center mb-6">
-              Mine pizza
+              school exams made easy system
             </p>
 
             {error && (

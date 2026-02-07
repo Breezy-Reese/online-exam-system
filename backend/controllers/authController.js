@@ -35,3 +35,24 @@ exports.login = async (req, res) => {
     res.status(400).send({ error: e.message });
   }
 };
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      // For security, don't reveal if email exists or not
+      return res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
+    }
+
+    // TODO: Generate reset token and send email
+    // For now, just log it
+    console.log(`Password reset requested for: ${email}`);
+
+    res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
