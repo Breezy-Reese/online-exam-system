@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -18,7 +18,7 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -28,19 +28,17 @@ const Register = () => {
       setError('Password must be at least 6 characters');
       return;
     }
-    // Store user in localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const newUser = { id: Date.now(), name: formData.name, email: formData.email, role: formData.role };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    // Simulate registration - in real app, this would call an API
-    login(newUser);
-    if (formData.role === "admin") {
-      navigate("/admin");
-    } else if (formData.role === "teacher") {
-      navigate("/teacher");
+    const result = await register(formData.name, formData.email, formData.password, formData.role);
+    if (result.success) {
+      if (formData.role === "admin") {
+        navigate("/admin");
+      } else if (formData.role === "teacher") {
+        navigate("/teacher");
+      } else {
+        navigate("/exams");
+      }
     } else {
-      navigate("/exams");
+      setError(result.error);
     }
   };
 

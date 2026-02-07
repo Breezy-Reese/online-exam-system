@@ -16,11 +16,10 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate login - in real app, this would call an API
-    if (formData.email && formData.password) {
-      login({ id: Date.now(), name: formData.email.split('@')[0], email: formData.email, role: formData.role });
+    const result = await login(formData.email, formData.password);
+    if (result.success) {
       if (formData.role === "admin") {
         navigate("/admin");
       } else if (formData.role === "teacher") {
@@ -29,7 +28,7 @@ const Login = () => {
         navigate("/exams");
       }
     } else {
-      setError('Please fill in all fields');
+      setError(result.error);
     }
   };
 
