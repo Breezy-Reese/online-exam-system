@@ -40,8 +40,24 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
   };
 
+  const handleOAuthCallback = async (token) => {
+    try {
+      // Verify the token and get user data
+      const response = await api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const user = response.data.user;
+      setUser(user);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", token);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'OAuth login failed' };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, handleOAuthCallback }}>
       {children}
     </AuthContext.Provider>
   );

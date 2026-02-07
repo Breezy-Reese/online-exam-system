@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import ForgotPassword from "./auth/ForgotPassword";
@@ -11,6 +12,37 @@ import TakeExam from "./pages/student/TakenExam";
 import Result from "./pages/student/Result";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+
+function OAuthCallback() {
+  const { handleOAuthCallback } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      handleOAuthCallback(token).then((result) => {
+        if (result.success) {
+          // Redirect based on user role
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (user.role === 'admin') navigate('/admin');
+          else if (user.role === 'teacher') navigate('/teacher');
+          else navigate('/exams');
+        } else {
+          navigate('/login');
+        }
+      });
+    } else {
+      navigate('/login');
+    }
+  }, [handleOAuthCallback, navigate, location]);
+
+  return <div>Loading...</div>;
+}
 
 function App() {
   return (
@@ -83,6 +115,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
 
         <Route path="/profile" element={<Profile />} />
       </Routes>

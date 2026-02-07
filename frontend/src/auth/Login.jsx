@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { MdEmail, MdLock } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
@@ -9,6 +9,14 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // eye icons
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/google`;
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/auth/facebook`;
+  };
 
   const [formData, setFormData] = useState({
     email: "",
@@ -195,6 +203,7 @@ const Login = () => {
             <div className="flex gap-4">
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="flex-1 flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-100"
               >
                 <FcGoogle size={20} />
@@ -203,6 +212,7 @@ const Login = () => {
 
               <button
                 type="button"
+                onClick={handleFacebookLogin}
                 className="flex-1 flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-100"
               >
                 <FaFacebookF className="text-blue-600" />
