@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { MdEmail, MdLock } from "react-icons/md";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookF } from "react-icons/fa";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // eye icons
 
 const Login = () => {
   const { login } = useAuth();
@@ -13,8 +17,10 @@ const Login = () => {
   });
 
   const [error, setError] = useState("");
-  const [isLampOn, setIsLampOn] = useState(false);
+  const [isLampOn, setIsLampOn] = useState(true);
   const [isPulling, setIsPulling] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // new state for password
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,14 +59,14 @@ const Login = () => {
       {isLampOn && (
         <div
           className="absolute left-[15%] top-0 w-[900px] h-[900px]
-          bg-gradient-to-br from-yellow-200/45 via-yellow-100/20 to-transparent
+          bg-gradient-to-br from-yellow-200/40 via-yellow-100/20 to-transparent
           blur-3xl pointer-events-none z-0"
         />
       )}
 
       <div className="relative z-10 flex items-center gap-24">
         {/* ===== WHITE LAMP (SHORTER) ===== */}
-        <div className="relative flex flex-col items-center h-[360px]">
+        <div className="relative flex flex-col items-center h-[340px]">
           {/* Dome */}
           <div className="w-56 h-20 rounded-t-full bg-white" />
 
@@ -88,64 +94,126 @@ const Login = () => {
 
         {/* ===== FORM (ONLY WHEN LAMP IS ON) ===== */}
         {isLampOn && (
-          <div className="relative w-96 p-8 rounded-xl bg-white/95 shadow-[0_0_80px_rgba(253,224,71,0.4)]">
-            <h2 className="text-2xl font-semibold mb-6 text-center">Welcome</h2>
+          <div className="relative w-96 p-8 rounded-2xl bg-white shadow-[0_0_80px_rgba(253,224,71,0.45)]">
+            <h2 className="text-2xl font-semibold text-center">Log in</h2>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              Mine pizza
+            </p>
 
             {error && (
               <p className="text-red-500 mb-4 text-center">{error}</p>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
               <div>
                 <label className="block text-sm mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
-                  required
-                />
+                <div className="relative">
+                  <MdEmail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full pl-10 p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
+                    required
+                  />
+                </div>
               </div>
 
+              {/* Password */}
               <div>
                 <label className="block text-sm mb-1">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
-                  required
-                />
+                <div className="relative">
+                  <MdLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-10 p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
+                    required
+                  />
+                  <span
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+                  </span>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm mb-1">Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
+              {/* Remember + Forgot */}
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    className="accent-yellow-500"
+                  />
+                  Remember me
+                </label>
+
+                <Link
+                  to="/forgot-password"
+                  className="text-red-500 hover:underline"
                 >
-                  <option value="student">Student</option>
-                  <option value="admin">Admin</option>
-                  <option value="teacher">Teacher</option>
-                </select>
+                  Forgot your password?
+                </Link>
               </div>
 
+              {/* Role */}
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+              </select>
+
+              {/* Login */}
               <button
                 type="submit"
-                className="w-full bg-[#e5c76b] text-black py-2 rounded-md font-medium hover:bg-[#f0d87d]"
+                className="w-full bg-red-500 text-white py-3 rounded-full font-medium hover:bg-red-600 transition"
               >
-                Login
+                Log in
               </button>
             </form>
 
-            <p className="mt-4 text-center text-sm">
-              Don't have an account?{" "}
-              <Link to="/register" className="text-yellow-600 hover:underline">
-                Register here
+            {/* OR */}
+            <div className="flex items-center my-5">
+              <div className="flex-1 h-px bg-gray-300" />
+              <span className="px-3 text-sm text-gray-400">OR</span>
+              <div className="flex-1 h-px bg-gray-300" />
+            </div>
+
+            {/* Social login */}
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-100"
+              >
+                <FcGoogle size={20} />
+                Google
+              </button>
+
+              <button
+                type="button"
+                className="flex-1 flex items-center justify-center gap-2 border rounded-lg py-2 hover:bg-gray-100"
+              >
+                <FaFacebookF className="text-blue-600" />
+                Facebook
+              </button>
+            </div>
+
+            <p className="mt-5 text-center text-sm">
+              Don’t have an account?{" "}
+              <Link to="/register" className="text-red-500 font-medium hover:underline">
+                Sign up
               </Link>
             </p>
           </div>
